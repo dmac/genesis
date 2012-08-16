@@ -19,10 +19,10 @@ module.exports = class Map
   generateLandBlocks: (options) ->
     _.times options.landBlocks, =>
 
-      blockMinWidth = Math.floor((options.width - 2 * options.borderSize) / 3)
-      blockMinHeight = Math.floor((options.height - 2 * options.borderSize) / 3)
-      blockMaxWidth = Math.floor((options.width - 2 * options.borderSize) / 2)
-      blockMaxHeight = Math.floor((options.height - 2 * options.borderSize) / 2)
+      blockMinWidth = Math.floor((options.width - 2 * options.borderSize) / 3 / options.islandFactor)
+      blockMinHeight = Math.floor((options.height - 2 * options.borderSize) / 2 / options.islandFactor)
+      blockMaxWidth = Math.floor((options.width - 2 * options.borderSize) / 3 / options.islandFactor)
+      blockMaxHeight = Math.floor((options.height - 2 * options.borderSize) / 2 / options.islandFactor)
 
       blockWidth = blockMinWidth + Math.floor Math.random() * (blockMaxWidth - blockMinWidth)
       blockHeight = blockMinHeight + Math.floor Math.random() * (blockMaxHeight - blockMinHeight)
@@ -74,3 +74,4 @@ module.exports = class Map
     height: 50
     landBlocks: 5
     borderSize: 5
+    islandFactor: 1
