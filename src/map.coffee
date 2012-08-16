@@ -9,17 +9,12 @@ module.exports = class Map
          row: row
          col: col
          type: null
-
     @generateTiles _.extend @defaults(), options
 
   generateTiles: (options) ->
-    @fillOceanBorder(options)
     @generateLandBlocks(options)
     @assignBeaches(options)
     @floodWithOcean(options)
-
-  fillOceanBorder: (options) ->
-    _.each @tiles[0], (tile) -> tile.type = "ocean"
 
   generateLandBlocks: (options) ->
     _.each _.range(options.landBlocks), =>
