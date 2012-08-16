@@ -99,8 +99,8 @@ module.exports = class Map
     neighbors
 
   defaults: ->
-    width: 50
-    height: 50
-    landBlocks: 5
+    width: 100
+    height: 100
+    landBlocks: 100
     borderSize: 2
-    islandFactor: 1
+    islandFactor: 3
