@@ -1,0 +1,23 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background: #FFF5D2;
+}
+
+#wrapper {
+  width: 1000px;
+  margin: auto;
+  text-align: center;
+}
+
+h1 {
+  margin: 20px;
+}
+
+#canvas {
+  border: 1px solid black;
+  background: #FFFFFF;
+}

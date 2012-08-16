@@ -1,0 +1,22 @@
+{
+  "author": "Daniel MacDougall <dmacdougall@gmail.com> (http://www.danielmacdougall.com)",
+  "name": "genesis",
+  "description": "Random tile map generator",
+  "version": "0.0.1",
+  "homepage": "http://github.com/dmacdougall/genesis",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dmacdougall/genesis.git"
+  },
+  "main": "./lib/genesis",
+  "dependencies":
+  { "underscore": ">=1.1.3"
+  },
+  "devDependencies":
+  { "stitch": ">=0.3.3"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

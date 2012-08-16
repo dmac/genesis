@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Genesis</title>
+    <link type="text/css" href="/index.css" rel="stylesheet" />
+    <script src="/genesis.js"></script>
+    <script type="text/javascript">
+      window.addEventListener("load", function() {
+        var genesis = require("genesis");
+        var map = new genesis.Map();
+        var renderer = new genesis.Renderer(document.getElementById("canvas"), map);
+        renderer.render();
+      });
+    </script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>Genesis</h2>
+      <canvas id="canvas" width="500" height="500"></canvas>
+    </div>
+  </body>
+</html>
