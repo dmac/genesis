@@ -15,7 +15,8 @@ module.exports = class Map
     @formLand(options)
     @fillOcean(options)
     @fillLakes(options)
-    @assignBeaches(options)
+    @formBeaches(options)
+    @setAltitudes(options)
 
   formLand: (options) ->
     _.times options.landBlocks, =>
@@ -47,11 +48,32 @@ module.exports = class Map
     @eachTile (tile) ->
       tile.type ||= "lake"
 
-  assignBeaches: (options) ->
+  formBeaches: (options) ->
     @eachTile (tile) =>
       if tile.type == "grass" &&
           _.find(@tileNeighborsWithDiagonals(tile), (neighbor) -> neighbor.type == "ocean")
         tile.type = "sand"
+
+  setAltitudes: (options) ->
+    @eachTile (tile) =>
+      tile.altitude = @distanceFromWater(tile)
+
+  # TODO: This gets to be too expensive around 100x100 maps. Needs to be optimized.
+  distanceFromWater: (origin) ->
+    visited = [origin]
+    queue = [origin]
+    origin.depth = 0
+    while queue.length > 0
+      tile = queue.pop()
+      break if _.include ["ocean", "lake"], tile.type
+      neighbors = _.filter @tileNeighbors(tile), (neighbor) -> !neighbor.depth?
+      for neighbor in neighbors
+        neighbor.depth = tile.depth + 1
+        visited.push(neighbor)
+        queue.unshift(neighbor)
+    altitude = tile.depth
+    _.each visited, (tile) -> delete tile.depth
+    return altitude
 
   eachTile: (callback) ->
     _.each @tiles, (row) ->
@@ -77,8 +99,8 @@ module.exports = class Map
     neighbors
 
   defaults: ->
-    width: 100
-    height: 100
-    landBlocks: 15
-    borderSize: 5
-    islandFactor: 2
+    width: 50
+    height: 50
+    landBlocks: 5
+    borderSize: 2
+    islandFactor: 1

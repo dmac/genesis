@@ -4,10 +4,11 @@
     <link type="text/css" href="/index.css" rel="stylesheet" />
     <script src="/genesis.js"></script>
     <script type="text/javascript">
+      var genesis, map, renderer;
       window.addEventListener("load", function() {
-        var genesis = require("genesis");
-        var map = new genesis.Map();
-        var renderer = new genesis.Renderer(document.getElementById("canvas"), map);
+        genesis = require("genesis");
+        map = new genesis.Map();
+        renderer = new genesis.Renderer(document.getElementById("canvas"), map);
         renderer.render();
       });
     </script>
