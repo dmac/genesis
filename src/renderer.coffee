@@ -16,6 +16,7 @@ module.exports = class Renderer
   tileColor: (tile) ->
     switch tile.type
       when "ocean" then "#25458D"
+      when "lake" then "#60B4C0"
       when "sand" then "#BAAA55"
       when "grass" then "#6AA522"
       when "forest" then "#08520F"

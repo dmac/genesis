@@ -12,11 +12,12 @@ module.exports = class Map
     @generateTiles _.extend @defaults(), options
 
   generateTiles: (options) ->
-    @generateLandBlocks(options)
+    @formLand(options)
+    @fillOcean(options)
+    @fillLakes(options)
     @assignBeaches(options)
-    @floodWithOcean(options)
 
-  generateLandBlocks: (options) ->
+  formLand: (options) ->
     _.times options.landBlocks, =>
 
       blockMinWidth = Math.floor((options.width - 2 * options.borderSize) / 3 / options.islandFactor)
@@ -35,16 +36,22 @@ module.exports = class Map
         _.each _.range(blockCol, blockCol + blockWidth), (col) =>
           @tiles[row][col].type ||= "grass"
 
+  fillOcean: (options) ->
+    stack = [@tiles[0][0]]
+    while stack.length > 0
+      tile = stack.pop()
+      tile.type = "ocean"
+      stack = stack.concat _.filter @tileNeighbors(tile), (neighbor) -> !neighbor.type?
+
+  fillLakes: (options) ->
+    @eachTile (tile) ->
+      tile.type ||= "lake"
+
   assignBeaches: (options) ->
     @eachTile (tile) =>
       if tile.type == "grass" &&
-          _.find(@tileNeighborsWithDiagonals(tile), (neighbor) -> _.include ["ocean", null], neighbor.type)
+          _.find(@tileNeighborsWithDiagonals(tile), (neighbor) -> neighbor.type == "ocean")
         tile.type = "sand"
-
-  floodWithOcean: (options) ->
-    _.each _.range(options.height), (row) =>
-      _.each _.range(options.width), (col) =>
-        @tiles[row][col].type ||= "ocean"
 
   eachTile: (callback) ->
     _.each @tiles, (row) ->
@@ -70,8 +77,8 @@ module.exports = class Map
     neighbors
 
   defaults: ->
-    width: 50
-    height: 50
-    landBlocks: 5
+    width: 100
+    height: 100
+    landBlocks: 15
     borderSize: 5
-    islandFactor: 1
+    islandFactor: 2
