@@ -43,7 +43,7 @@ module.exports = class Map
   assignBeaches: (options) ->
     @eachTile (tile) =>
       if tile.type == "grass" &&
-          _.find(@tileNeighbors(tile), (neighbor) -> _.include ["ocean", null], neighbor.type)
+          _.find(@tileNeighborsWithDiagonals(tile), (neighbor) -> _.include ["ocean", null], neighbor.type)
         tile.type = "sand"
 
   floodWithOcean: (options) ->
@@ -62,6 +62,16 @@ module.exports = class Map
     neighbors.push(@tiles[tile.row][tile.col + 1]) if tile.col < @tiles[tile.row].length - 1
     neighbors.push(@tiles[tile.row + 1][tile.col]) if tile.row < @tiles.length - 1
     neighbors.push(@tiles[tile.row][tile.col - 1]) if tile.col > 0
+    neighbors
+
+  tileNeighborsWithDiagonals: (tile) ->
+    neighbors = @tileNeighbors(tile)
+    neighbors.push(@tiles[tile.row - 1][tile.col + 1]) if tile.row > 0 &&
+        tile.col < @tiles[tile.row].length - 1
+    neighbors.push(@tiles[tile.row + 1][tile.col + 1]) if tile.row < @tiles.length - 1 &&
+        tile.col < @tiles[tile.row].length - 1
+    neighbors.push(@tiles[tile.row + 1][tile.col - 1]) if tile.row < @tiles.length - 1 && tile.col > 0
+    neighbors.push(@tiles[tile.row - 1][tile.col - 1]) if tile.row > 0 && tile.col > 0
     neighbors
 
   defaults: ->
