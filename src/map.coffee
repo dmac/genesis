@@ -13,22 +13,28 @@ module.exports = class Map
     @generateTiles _.extend @defaults(), options
 
   generateTiles: (options) ->
+    @fillOceanBorder(options)
     @generateLandBlocks(options)
     @assignBeaches(options)
     @floodWithOcean(options)
 
+  fillOceanBorder: (options) ->
+    _.each @tiles[0], (tile) -> tile.type = "ocean"
+
   generateLandBlocks: (options) ->
     _.each _.range(options.landBlocks), =>
 
-      blockMinWidth = Math.floor(options.width / 3)
-      blockMinHeight = Math.floor(options.height / 3)
-      blockMaxWidth = Math.floor(options.width / 2)
-      blockMaxHeight = Math.floor(options.height / 2)
+      blockMinWidth = Math.floor((options.width - 2 * options.borderSize) / 3)
+      blockMinHeight = Math.floor((options.height - 2 * options.borderSize) / 3)
+      blockMaxWidth = Math.floor((options.width - 2 * options.borderSize) / 2)
+      blockMaxHeight = Math.floor((options.height - 2 * options.borderSize) / 2)
 
       blockWidth = blockMinWidth + Math.floor Math.random() * (blockMaxWidth - blockMinWidth)
       blockHeight = blockMinHeight + Math.floor Math.random() * (blockMaxHeight - blockMinHeight)
-      blockRow = Math.floor Math.random() * (options.height - blockHeight)
-      blockCol = Math.floor Math.random() * (options.width - blockWidth)
+      blockRow = options.borderSize +
+          Math.floor Math.random() * (options.height - blockHeight - 2 * options.borderSize)
+      blockCol = options.borderSize +
+          Math.floor Math.random() * (options.width - blockWidth - 2 * options.borderSize)
 
       _.each _.range(blockRow, blockRow + blockHeight), (row) =>
         _.each _.range(blockCol, blockCol + blockWidth), (col) =>
@@ -36,7 +42,8 @@ module.exports = class Map
 
   assignBeaches: (options) ->
     @eachTile (tile) =>
-      if tile.type == "grass" && _.find(@tileNeighbors(tile), (neighbor) -> !neighbor.type?)
+      if tile.type == "grass" &&
+          _.find(@tileNeighbors(tile), (neighbor) -> _.include ["ocean", null], neighbor.type)
         tile.type = "sand"
 
   floodWithOcean: (options) ->
@@ -60,4 +67,5 @@ module.exports = class Map
   defaults: ->
     width: 50
     height: 50
-    landBlocks: 6
+    landBlocks: 5
+    borderSize: 5
