@@ -10,9 +10,36 @@ module.exports = class Renderer
     @map.eachTile (tile) => @drawTile tile
 
   drawTile: (tile) ->
-    #@ctx.fillStyle = @tileTerrainColor(tile)
-    @ctx.fillStyle = @tileAltitudeColor(tile)
-    @ctx.fillRect(tile.col * @tileWidth, tile.row * @tileHeight, @tileWidth, @tileHeight)
+    #mapType = "terrain"
+    mapType = "altitude"
+    if mapType == "terrain"
+      @ctx.fillStyle = @tileTerrainColor(tile)
+      @ctx.fillRect(tile.col * @tileWidth, tile.row * @tileHeight, @tileWidth, @tileHeight)
+      @ctx.fillStyle = "#60B4C0"
+      @drawRiver(tile)
+    else if mapType == "altitude"
+      @ctx.fillStyle = @tileAltitudeColor(tile)
+      @ctx.fillRect(tile.col * @tileWidth, tile.row * @tileHeight, @tileWidth, @tileHeight)
+      @ctx.fillStyle = "#000000"
+      @drawRiver(tile)
+
+  drawRiver: (tile) ->
+    if tile.river?
+      riverWidth =
+        if _.include ["north", "south"], tile.river
+        then Math.max(@tileHeight / 5, 1)
+        else Math.max(@tileWidth / 5, 1)
+      switch tile.river
+        when "north"
+          @ctx.fillRect(tile.col * @tileWidth, tile.row * @tileHeight, @tileWidth, riverWidth)
+        when "east"
+          @ctx.fillRect(tile.col * @tileWidth + @tileWidth - riverWidth, tile.row * @tileHeight,
+            riverWidth, @tileHeight)
+        when "south"
+          @ctx.fillRect(tile.col * @tileWidth, tile.row * @tileHeight + @tileHeight - riverWidth,
+              @tileWidth, riverWidth)
+        when "west"
+          @ctx.fillRect(tile.col * @tileWidth, tile.row * @tileHeight, riverWidth, @tileHeight)
 
   tileTerrainColor: (tile) ->
     switch tile.type
@@ -21,6 +48,7 @@ module.exports = class Renderer
       when "sand" then "#BAAA55"
       when "grass" then "#6AA522"
       when "forest" then "#08520F"
+      when "snow" then "#FFFFFF"
       else "#0000FF"
 
   tileAltitudeColor: (tile) ->
@@ -35,5 +63,4 @@ module.exports = class Renderer
       when 13, 14 then "#C0AD07"
       when 15, 16 then "#C07412"
       when 17, 18 then "#C03E04"
-      when 19, 20 then "#96000A"
-      else "#FFFFFF"
+      else "#96000A"

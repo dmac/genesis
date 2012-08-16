@@ -17,6 +17,7 @@ module.exports = class Map
     @fillLakes(options)
     @formBeaches(options)
     @setAltitudes(options)
+    @fillRivers(options)
 
   formLand: (options) ->
     _.times options.landBlocks, =>
@@ -74,6 +75,46 @@ module.exports = class Map
     altitude = tile.depth
     _.each visited, (tile) -> delete tile.depth
     return altitude
+
+  fillRivers: (options) ->
+    peaks = []
+    maxAltitude = 0
+    @eachTile (tile) ->
+      if tile.altitude > maxAltitude
+        maxAltitude = tile.altitude
+        peaks = [tile]
+      else if tile.altitude == maxAltitude
+        peaks.push(tile)
+    numRivers = Math.ceil(peaks.length / 4)
+    peaksWithRivers = _.first _.shuffle(peaks), numRivers
+    console.log(peaksWithRivers.length)
+    _.each peaksWithRivers, (peak) => @fillRiverFromPeak(peak)
+
+  fillRiverFromPeak: (tile) ->
+    previousNeighbor = null
+    while tile.altitude > 0
+      neighbors = @tileNeighbors(tile)
+      lowestNeighborAltitude = _.min _.map neighbors, (neighbor) -> neighbor.altitude
+      lowestNeighbors = _.filter neighbors, (neighbor) -> neighbor.altitude == lowestNeighborAltitude
+      nextNeighbor = _.first _.shuffle lowestNeighbors
+      if !previousNeighbor?
+        if nextNeighbor.row == tile.row
+        then tile.river = _.first _.shuffle ["north", "south"]
+        else tile.river = _.first _.shuffle ["west", "east"]
+      else
+        if previousNeighbor.row == tile.row
+          if tile.row == nextNeighbor.row
+            tile.river = previousNeighbor.river
+          else
+            tile.river = if previousNeighbor.col < tile.col then "west" else "east"
+        else if previousNeighbor.col == tile.col
+          if tile.col == nextNeighbor.col
+            tile.river = previousNeighbor.river
+          else
+            tile.river = if previousNeighbor.row < tile.row then "north" else "south"
+      previousNeighbor = tile
+      tile = nextNeighbor
+
 
   eachTile: (callback) ->
     _.each @tiles, (row) ->
