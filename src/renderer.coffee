@@ -10,7 +10,6 @@ module.exports = class Renderer
     @map.eachTile (tile) => @drawTile tile
 
   drawTile: (tile) ->
-    return unless tile?
     @ctx.fillStyle = @tileColor(tile)
     @ctx.fillRect(tile.col * @tileHeight, tile.row * @tileWidth, @tileWidth, @tileHeight)
 
@@ -20,4 +19,4 @@ module.exports = class Renderer
       when "sand" then "#BAAA55"
       when "grass" then "#6AA522"
       when "forest" then "#08520F"
-      else "red"
+      else "#FFFFFF"

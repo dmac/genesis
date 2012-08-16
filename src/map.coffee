@@ -3,11 +3,18 @@ _ = require "underscore"
 module.exports = class Map
   constructor: (options) ->
     options = _.extend @defaults(), options
-    @tiles = _.map _.range(options.height), -> _.map _.range(options.width), -> null
+    @tiles =
+      _.map _.range(options.height), (row) ->
+        _.map _.range(options.width), (col) ->
+         row: row
+         col: col
+         type: null
+
     @generateTiles _.extend @defaults(), options
 
   generateTiles: (options) ->
     @generateLandBlocks(options)
+    @assignBeaches(options)
     @floodWithOcean(options)
 
   generateLandBlocks: (options) ->
@@ -25,25 +32,30 @@ module.exports = class Map
 
       _.each _.range(blockRow, blockRow + blockHeight), (row) =>
         _.each _.range(blockCol, blockCol + blockWidth), (col) =>
-          unless @tiles[row][col]?
-            @tiles[row][col] =
-              type: "sand",
-              row: row,
-              col: col
+          @tiles[row][col].type ||= "grass"
+
+  assignBeaches: (options) ->
+    @eachTile (tile) =>
+      if tile.type == "grass" && _.find(@tileNeighbors(tile), (neighbor) -> !neighbor.type?)
+        tile.type = "sand"
 
   floodWithOcean: (options) ->
     _.map _.range(options.height), (row) =>
       _.map _.range(options.width), (col) =>
-        unless @tiles[row][col]?
-          @tiles[row][col] =
-            type: "ocean",
-            row: row,
-            col: col
+        @tiles[row][col].type ||= "ocean"
 
   eachTile: (callback) ->
     _.each @tiles, (row) ->
       _.each row, (tile) ->
         callback(tile)
+
+  tileNeighbors: (tile) ->
+    neighbors = []
+    neighbors.push(@tiles[tile.row - 1][tile.col]) if tile.row > 0
+    neighbors.push(@tiles[tile.row][tile.col + 1]) if tile.col < @tiles[tile.row].length - 1
+    neighbors.push(@tiles[tile.row + 1][tile.col]) if tile.row < @tiles.length - 1
+    neighbors.push(@tiles[tile.row][tile.col - 1]) if tile.col > 0
+    neighbors
 
   defaults: ->
     width: 50
