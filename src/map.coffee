@@ -17,7 +17,7 @@ module.exports = class Map
     @floodWithOcean(options)
 
   generateLandBlocks: (options) ->
-    _.each _.range(options.landBlocks), =>
+    _.times options.landBlocks, =>
 
       blockMinWidth = Math.floor((options.width - 2 * options.borderSize) / 3)
       blockMinHeight = Math.floor((options.height - 2 * options.borderSize) / 3)
@@ -42,8 +42,8 @@ module.exports = class Map
         tile.type = "sand"
 
   floodWithOcean: (options) ->
-    _.map _.range(options.height), (row) =>
-      _.map _.range(options.width), (col) =>
+    _.each _.range(options.height), (row) =>
+      _.each _.range(options.width), (col) =>
         @tiles[row][col].type ||= "ocean"
 
   eachTile: (callback) ->
