@@ -12,6 +12,9 @@ $ cake serve
 
 View demo site at http://localhost:8000
 
+This project includes a renderer in addition to the map generator, but it's separate from the map generation
+algorithm. You can take the JSON output of the map generator and use it however you please.
+
 ## Examples
 
 Parameters like size and distribution of land are configurable, so you can have one large land-mass or a lot
